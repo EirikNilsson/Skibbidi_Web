@@ -6,12 +6,20 @@ describe 'Request' do
     describe 'Simple get-request' do
     
         it 'parses the http method' do
-            @request = Request.new(File.read('./spec/example_requests/get-index.request.txt'))
+            request_string = File.read('./spec/example_requests/get-index.request.txt')
+            request = Request.new(request_string)
             _(@request.method).must_equal :get
         end
 
         it 'parses the resource' do
-            @request = Request.new(File.read('./spec/example_requests/get-index.request.txt'))
+            request_string = File.read('./spec/example_requests/get-index.request.txt')
+            request = Request.new(request_string)
+            _(@request.resource).must_equal "/"
+        end
+
+        it 'parses the resource' do
+            request_string = File.read('./spec/example_requests/get-index.request.txt')
+            request = Request.new(request_string)
             _(@request.resource).must_equal "/"
         end
 
