@@ -1,3 +1,4 @@
+
 require_relative 'C:\Users\eirik.haugennilsson\Desktop\Programering 2\Skibbidi-main\Skibbidi-main\lib\request.rb'
 
 request_string = File.read('C:\Users\eirik.haugennilsson\Desktop\Programering 2\Skibbidi-main\Skibbidi-main\spec\example_requests\get-index.request.txt')
