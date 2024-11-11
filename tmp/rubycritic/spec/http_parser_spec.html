@@ -62,22 +62,22 @@
       <div class="col-md-8">
         <div class="row">
           <div class="col-md-1">
-            <div class="rating c big">
-              C
+            <div class="rating b big">
+              B
             </div>
           </div>
           <div class="code-statistics col-md-11">
             <div class="col-md-3">
-              <div><span class="metric">122</span><small> lines of codes</small></div>
-              <div><span class="metric">0</span><small> methods</small></div>
+              <div><span class="metric">90</span><small> lines of codes</small></div>
+              <div><span class="metric">1</span><small> methods</small></div>
             </div>
             <div class="col-md-3">
-              <div><span class="metric">N/A</span><small> complexity/method</small></div>
-              <div><span class="metric">3</span><small> churn</small></div>
+              <div><span class="metric">73.3</span><small> complexity/method</small></div>
+              <div><span class="metric">4</span><small> churn</small></div>
             </div>
             <div class="col-md-3">
-              <div><span class="metric">123.45</span><small> complexity</small></div>
-              <div><span class="metric">84</span><small> duplications</small></div>
+              <div><span class="metric">73.29</span><small> complexity</small></div>
+              <div><span class="metric">0</span><small> duplications</small></div>
             </div>
           </div>
         </div>
@@ -99,18 +99,31 @@
 
     <code class="prettyprint linenums lang-ruby file-code js-file-code"># frozen_string_literal: true
 
-require_relative &#39;C:\Users\eirik.haugennilsson\Desktop\Programering 2\Skibbidi\lib\request&#39;
+# Initialize SimpleCov to measure code coverage
+require &#39;simplecov&#39;
+SimpleCov.start
+
+# Require necessary files
+require_relative &#39;C:/Users/eirik.haugennilsson/Desktop/Programering 2/Skibbidi/lib/request&#39;
 require &#39;minitest/autorun&#39;
 require &#39;minitest/reporters&#39;
 
 Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new
 
-# File paths for test request files
-REQUESTS_PATH = &#39;C:\Users\eirik.haugennilsson\Desktop\Programering 2\Skibbidi\spec\example_requests&#39;
+# Define constants for file paths
+REQUESTS_PATH = &#39;C:/Users/eirik.haugennilsson/Desktop/Programering 2/Skibbidi/spec/example_requests&#39;
 GET_INDEX_PATH = File.join(REQUESTS_PATH, &#39;get-index.request.txt&#39;)
 GET_FRUITS_PATH = File.join(REQUESTS_PATH, &#39;get-fruits-with-filter.request.txt&#39;)
 POST_LOGIN_PATH = File.join(REQUESTS_PATH, &#39;post-login.request.txt&#39;)
 
+# Helper method to test common HTTP components
+def assert_http_components(request, expected_method, expected_resource, expected_version)<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Long-Parameter-List.md" target="_blank"><b>LongParameterList</b></a>        </span>      </div>      <span>assert_http_components has 4 parameters</span>          </div>  </li></ol>
+  _(request.http_method).must_equal expected_method
+  _(request.resource).must_equal expected_resource
+  _(request.version).must_equal expected_version
+end
+
+# Test suite for Request class
 describe &#39;Request&#39; do
   describe &#39;Simple GET request&#39; do
     before do
@@ -118,29 +131,14 @@ describe &#39;Request&#39; do
       @request = Request.new(request_string)
     end
 
-    describe &#39;parsing HTTP components&#39; do<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="http://docs.seattlerb.org/flay/" target="_blank"><b>DuplicateCode</b></a>        </span>      </div>      <span>Similar code found in 3 nodes</span>              <span>Locations:</span>                  <a href="http_parser_spec.html#L22" class="js-smell-location">0</a>                  <a href="http_parser_spec.html#L54" class="js-smell-location">1</a>                  <a href="http_parser_spec.html#L92" class="js-smell-location">2</a>                  </div>  </li></ol>
-      it &#39;parses the HTTP method&#39; do
-        _(@request.http_method).must_equal &#39;GET&#39;
-      end
-
-      it &#39;parses the resource&#39; do
-        _(@request.resource).must_equal &#39;/&#39;
-      end
-
-      it &#39;parses the HTTP version&#39; do
-        _(@request.version).must_equal &#39;HTTP/1.1&#39;
-      end
+    it &#39;parses HTTP components correctly&#39; do
+      assert_http_components(@request, &#39;GET&#39;, &#39;/&#39;, &#39;HTTP/1.1&#39;)
     end
 
-    describe &#39;parsing headers and params&#39; do
-      it &#39;parses the headers&#39; do
-        expected_headers = { &#39;Host&#39; =&gt; &#39;developer.mozilla.org&#39;, &#39;Accept-Language&#39; =&gt; &#39;fr&#39; }
-        _(@request.headers).must_equal expected_headers
-      end
-
-      it &#39;parses empty params for requests without query or body&#39; do
-        _(@request.params).must_equal({})
-      end
+    it &#39;parses headers and params&#39; do
+      expected_headers = { &#39;Host&#39; =&gt; &#39;developer.mozilla.org&#39;, &#39;Accept-Language&#39; =&gt; &#39;fr&#39; }
+      _(@request.headers).must_equal expected_headers
+      _(@request.params).must_equal({})
     end
   end
 
@@ -150,35 +148,20 @@ describe &#39;Request&#39; do
       @request = Request.new(request_string)
     end
 
-    describe &#39;parsing HTTP components&#39; do<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="http://docs.seattlerb.org/flay/" target="_blank"><b>DuplicateCode</b></a>        </span>      </div>      <span>Similar code found in 3 nodes</span>              <span>Locations:</span>                  <a href="http_parser_spec.html#L22" class="js-smell-location">0</a>                  <a href="http_parser_spec.html#L54" class="js-smell-location">1</a>                  <a href="http_parser_spec.html#L92" class="js-smell-location">2</a>                  </div>  </li></ol>
-      it &#39;parses the HTTP method&#39; do
-        _(@request.http_method).must_equal &#39;GET&#39;
-      end
-
-      it &#39;parses the resource&#39; do
-        _(@request.resource).must_equal &#39;/fruits&#39;
-      end
-
-      it &#39;parses the HTTP version&#39; do
-        _(@request.version).must_equal &#39;HTTP/1.1&#39;
-      end
+    it &#39;parses HTTP components correctly&#39; do
+      assert_http_components(@request, &#39;GET&#39;, &#39;/fruits&#39;, &#39;HTTP/1.1&#39;)
     end
 
-    describe &#39;parsing headers and query params&#39; do
-      it &#39;parses the headers&#39; do
-        expected_headers = {
-          &#39;Host&#39; =&gt; &#39;fruits.com&#39;,
-          &#39;User-Agent&#39; =&gt; &#39;ExampleBrowser/1.0&#39;,
-          &#39;Accept-Encoding&#39; =&gt; &#39;gzip, deflate&#39;,
-          &#39;Accept&#39; =&gt; &#39;*/*&#39;
-        }
-        _(@request.headers).must_equal expected_headers
-      end
-
-      it &#39;parses query parameters into params&#39; do
-        expected_params = { &#39;type&#39; =&gt; &#39;bananas&#39;, &#39;minrating&#39; =&gt; &#39;4&#39; }
-        _(@request.params).must_equal expected_params
-      end
+    it &#39;parses headers and query params&#39; do
+      expected_headers = {
+        &#39;Host&#39; =&gt; &#39;fruits.com&#39;,
+        &#39;User-Agent&#39; =&gt; &#39;ExampleBrowser/1.0&#39;,
+        &#39;Accept-Encoding&#39; =&gt; &#39;gzip, deflate&#39;,
+        &#39;Accept&#39; =&gt; &#39;*/*&#39;
+      }
+      expected_params = { &#39;type&#39; =&gt; &#39;bananas&#39;, &#39;minrating&#39; =&gt; &#39;4&#39; }
+      _(@request.headers).must_equal expected_headers
+      _(@request.params).must_equal expected_params
     end
   end
 
@@ -188,34 +171,19 @@ describe &#39;Request&#39; do
       @request = Request.new(request_string)
     end
 
-    describe &#39;parsing HTTP components&#39; do<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="http://docs.seattlerb.org/flay/" target="_blank"><b>DuplicateCode</b></a>        </span>      </div>      <span>Similar code found in 3 nodes</span>              <span>Locations:</span>                  <a href="http_parser_spec.html#L22" class="js-smell-location">0</a>                  <a href="http_parser_spec.html#L54" class="js-smell-location">1</a>                  <a href="http_parser_spec.html#L92" class="js-smell-location">2</a>                  </div>  </li></ol>
-      it &#39;parses the HTTP method&#39; do
-        _(@request.http_method).must_equal &#39;POST&#39;
-      end
-
-      it &#39;parses the resource&#39; do
-        _(@request.resource).must_equal &#39;/login&#39;
-      end
-
-      it &#39;parses the HTTP version&#39; do
-        _(@request.version).must_equal &#39;HTTP/1.1&#39;
-      end
+    it &#39;parses HTTP components correctly&#39; do
+      assert_http_components(@request, &#39;POST&#39;, &#39;/login&#39;, &#39;HTTP/1.1&#39;)
     end
 
-    describe &#39;parsing headers and body params&#39; do
-      it &#39;parses the headers&#39; do
-        expected_headers = {
-          &#39;Host&#39; =&gt; &#39;foo.example&#39;,
-          &#39;Content-Type&#39; =&gt; &#39;application/x-www-form-urlencoded&#39;,
-          &#39;Content-Length&#39; =&gt; &#39;39&#39;
-        }
-        _(@request.headers).must_equal expected_headers
-      end
-
-      it &#39;parses body parameters into params&#39; do
-        expected_params = { &#39;username&#39; =&gt; &#39;grillkorv&#39;, &#39;password&#39; =&gt; &#39;verys3cret!&#39; }
-        _(@request.params).must_equal expected_params
-      end
+    it &#39;parses headers and body params&#39; do
+      expected_headers = {
+        &#39;Host&#39; =&gt; &#39;foo.example&#39;,
+        &#39;Content-Type&#39; =&gt; &#39;application/x-www-form-urlencoded&#39;,
+        &#39;Content-Length&#39; =&gt; &#39;39&#39;
+      }
+      expected_params = { &#39;username&#39; =&gt; &#39;grillkorv&#39;, &#39;password&#39; =&gt; &#39;verys3cret!&#39; }
+      _(@request.headers).must_equal expected_headers
+      _(@request.params).must_equal expected_params
     end
   end
 end
