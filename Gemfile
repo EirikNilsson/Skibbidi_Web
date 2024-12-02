@@ -13,3 +13,5 @@ gem 'rubycritic', require: false
 group :test do
     gem 'simplecov', require: false
   end
+
+gem 'debug'
