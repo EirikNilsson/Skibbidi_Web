@@ -1,21 +1,27 @@
 require 'socket'
 require_relative 'request'
 require_relative 'router'
+require_relative 'response'
 
 class HTTPServer
   def initialize(port)
     @port = port
     @router = Router.new
 
-    @router.add_route('/fruit') do
+    @router.add_route('GET', '/fruit') do
+      "<html><body><h1>Welcome to my Fruit Page!</h1></body></html>"
+    end
+    @router.add_route('GET', '/fruit/:id') do |params|
       fruits = ['Apple', 'Banana', 'Orange', 'Pear', 'Grape']
-      fruit = fruits.sample
-      "<html><body><h1>Random fruit: #{fruit}</h1></body></html>"
+      id = params['id'].to_i
+      fruit = fruits[id] || 'Unknown'
+      "<html><body><h1>Fruit: #{fruit}</h1></body></html>"
+    end
+    @router.add_route('POST', '/fruit') do |params|
+      new_fruit = params['name'] || 'Unnamed Fruit'
+      "<html><body><h1>New Fruit Created: #{new_fruit}</h1></body></html>"
     end
 
-    @router.add_route('/') do
-      "<html><body><h1>Welcome to my server!</h1></body></html>"
-    end
   end
 
   def start
@@ -33,27 +39,17 @@ class HTTPServer
       puts data
       puts "-" * 40
 
-   
       request = Request.new(data)
-
-
       route_block = @router.match_route(request)
 
       if route_block
-        html = route_block.call
-        session.print "HTTP/1.1 200 OK\r\n"
-        session.print "Content-Type: text/html\r\n"
-        session.print "Content-Length: #{html.bytesize}\r\n"
-        session.print "\r\n"
-        session.print html
+        html = route_block.call(request.params) # Skicka parametrarna till blocket
+        Response.build(session, status_code: 200, body: html)
       else
         html = "<html><body><h1>404 Not Found</h1></body></html>"
-        session.print "HTTP/1.1 404 Not Found\r\n"
-        session.print "Content-Type: text/html\r\n"
-        session.print "Content-Length: #{html.bytesize}\r\n"
-        session.print "\r\n"
-        session.print html
+        Response.build(session, status_code: 404, body: html)
       end
+      
 
       session.close
     end

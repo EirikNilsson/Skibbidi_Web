@@ -15,3 +15,5 @@ group :test do
   end
 
 gem 'debug'
+
+gem 'rspec'
