@@ -17,11 +17,26 @@ class HTTPServer
       fruit = fruits[id] || 'Unknown'
       "<html><body><h1>Fruit: #{fruit}</h1></body></html>"
     end
-    @router.add_route('POST', '/fruit') do |params|
+    @router.add_route('POST', '/fruit/new') do |params|
       new_fruit = params['name'] || 'Unnamed Fruit'
-      "<html><body><h1>New Fruit Created: #{new_fruit}</h1></body></html>"
+      <<-HTML
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>New Fruit Created</title>
+      </head>
+      <body>
+          <h1>New Fruit Created: #{new_fruit}</h1>
+          <a href="/fruit">Go back</a>
+      </body>
+      </html>
+      HTML
     end
-
+    
+    
+    
   end
 
   def start

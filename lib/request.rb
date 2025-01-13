@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 # Parses HTTP request strings into their component parts.
 class Request
   attr_reader :http_method, :resource, :version, :headers, :params
