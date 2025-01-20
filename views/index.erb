@@ -67,18 +67,26 @@
     <main>
         <section>
             <h2>Introduktion</h2>
-            <p>Hej! Detta är en server skapad för att testa Ruby och grundläggande webbutveckling.</p>
-            <p>Här kan du se hur servern fungerar och hur den genererar HTML-innehåll direkt.</p>
+            <p>Hej!</p>
         </section>
         <section>
             <h2>Hur går det med servern?</h2>
-            <p>Allt ser bra ut! Din server lyssnar och kan skicka svar till klienter.</p>
-            <p>Du kan experimentera med att lägga till fler funktioner och interaktivitet.</p>
+            <p>Långsamt framåt</p>
         </section>
         <section>
             <h2>Funktioner</h2>
             <ul>
-                <a href="#" class="button">Lägg till</a>  
+                <form action="/" method="POST">
+                    <label for="name">Enter a new fruit:</label>
+                    <input type="text" id="name" name="name" required>
+                    <button type="submit">Add Fruit</button>
+                </form>
+                <h3>Frukter i listan:</h3>
+                <ul>
+                <% @fruits.each do |fruit| %>
+                    <li><%= fruit %></li>
+                <% end %>
+                </ul>
             </ul>
         </section>
         <section>
