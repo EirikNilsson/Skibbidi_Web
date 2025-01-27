@@ -4,6 +4,8 @@ require_relative 'request'
 require_relative 'router'
 require_relative 'response'
 
+# Global variabel för att lagra frukterna
+$fruits = ['Mango', 'Banan', 'Passionsfrukt', 'Kiwi', 'Apelsin']
 
 class HTTPServer
 
@@ -13,48 +15,73 @@ class HTTPServer
     ERB.new(template).result(binding)        
   end
 
-
   def initialize(port)
     @port = port
     @router = Router.new
-    @fruits = ['Mango', 'Banan']
 
-    
+    @router.add_route('GET', '/login') do
+      erb("views/login")  
+    end
 
     @router.add_route('GET', '/') do
       erb("views/index")  
     end
-    @router.add_route('GET', '/fruit/:id') do |params|
-      id = params['id'].to_i
-      @fruit = fruits[id] || 'Unknown'
-      "<html><body><h1>Fruit: #{fruit}</h1></body></html>"
-    end
 
-    @router.add_route('POST', '/') do |params|
-      @new_fruit = params['name'] 
-      @fruits << @new_fruit
+    @router.add_route('GET', '/:id') do |params|
+      id = params['id'].to_i
+      @fruit = $fruits[id] || 'Unknown'
       <<-HTML
       <!DOCTYPE html>
       <html lang="en">
       <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Fruit Added</title>
+          <title>Frukt #{$fruits[id]}</title>
       </head>
       <body>
-          <h1>New Fruit Added: #{@new_fruit}</h1>
+          <h1>Fruit: #{@fruit}</h1>
           <a href="/">Go Back to Fruit Page</a>
       </body>
       </html>
       HTML
     end
-    
 
+    @router.add_route('POST', '/') do |params|
+      @new_fruit = params['name']&.strip 
 
-
-    
-    
-    
+      if @new_fruit.nil? || @new_fruit.empty?
+        <<-HTML
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Error</title>
+        </head>
+        <body>
+            <h1>Invalid input: Please enter a valid fruit name!</h1>
+            <a href="/">Go Back to Fruit Page</a>
+        </body>
+        </html>
+        HTML
+      else
+        $fruits << @new_fruit
+        <<-HTML
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Fruit Added</title>
+        </head>
+        <body>
+            <h1>New Fruit Added: #{@new_fruit}</h1>
+            <a href="/">Go Back to Fruit Page</a>
+        </body>
+        </html>
+        HTML
+      end
+    end
   end
 
   def start
@@ -76,13 +103,12 @@ class HTTPServer
       route_block = @router.match_route(request)
 
       if route_block
-        html = route_block.call(request.params) 
+        html = route_block.call(request.params)
         Response.build(session, status_code: 200, body: html)
       else
         html = "<html><body><h1>404 Not Found</h1></body></html>"
         Response.build(session, status_code: 404, body: html)
       end
-      
 
       session.close
     end

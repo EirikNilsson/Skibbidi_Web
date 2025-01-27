@@ -57,6 +57,11 @@
         .button:hover {
             background-color: #0056b3;
         }
+
+        img {
+            width: 200px;
+            height: 200px;
+        }
     </style>
 </head>
 <body>
@@ -78,16 +83,22 @@
             <ul>
                 <form action="/" method="POST">
                     <label for="name">Enter a new fruit:</label>
-                    <input type="text" id="name" name="name" required>
+                    <input type="text" id="name" name="name" placeholder="Type fruit name" required>
                     <button type="submit">Add Fruit</button>
                 </form>
+          
                 <h3>Frukter i listan:</h3>
                 <ul>
-                <% @fruits.each do |fruit| %>
+                <% $fruits.each do |fruit| %>
                     <li><%= fruit %></li>
                 <% end %>
                 </ul>
             </ul>
+        </section>
+        <section> 
+            <h3>Bilder:</h3>
+            <img src="https://images.unsplash.com/photo-1737749309296-4aacdefecdae?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+            <img src="https://images.unsplash.com/photo-1734899749017-9e05036a7aeb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwzOHx8fGVufDB8fHx8fA%3D%3D" />
         </section>
         <section>
             <h2>Testa igen</h2>
@@ -96,7 +107,7 @@
         </section>
     </main>
     <footer>
-        <p>Skapad av [Eirik Nilsson] - Ruby HTTP Server © 2024</p>
+        <p>Skapad av [Eirik Nilsson] - Ruby HTTP Server © 2025</p>
     </footer>
 </body>
 </html>
