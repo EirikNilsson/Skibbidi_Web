@@ -28,61 +28,27 @@ class HTTPServer
     end
 
     @router.add_route('GET', '/:id') do |params|
-      id = params['id'].to_i
-      @fruit = $fruits[id] || 'Unknown'
-      <<-HTML
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Frukt #{$fruits[id]}</title>
-      </head>
-      <body>
-          <h1>Fruit: #{@fruit}</h1>
-          <a href="/">Go Back to Fruit Page</a>
-      </body>
-      </html>
-      HTML
+      @id = params['id'].to_i
+      @fruit = $fruits[@id] || 'Unknown'
+    end
+    @router.add_route('GET', '/add/:num1/:num2/') do |params|
+      num1 = params['num1'].to_i
+      num2 = params['num2'].to_i
+      result = num1 + num2
+      "<h1>Resultat: #{num1} + #{num2} = #{result}</h1>"
     end
 
     @router.add_route('POST', '/') do |params|
       @new_fruit = params['name']&.strip 
 
       if @new_fruit.nil? || @new_fruit.empty?
-        <<-HTML
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Error</title>
-        </head>
-        <body>
-            <h1>Invalid input: Please enter a valid fruit name!</h1>
-            <a href="/">Go Back to Fruit Page</a>
-        </body>
-        </html>
-        HTML
+        erb("views/invalid")  
       else
-        $fruits << @new_fruit
-        <<-HTML
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Fruit Added</title>
-        </head>
-        <body>
-            <h1>New Fruit Added: #{@new_fruit}</h1>
-            <a href="/">Go Back to Fruit Page</a>
-        </body>
-        </html>
-        HTML
+        erb("views/index")  
+
       end
-    end
   end
+end
 
   def start
     server = TCPServer.new(@port)

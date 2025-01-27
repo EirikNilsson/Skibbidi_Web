@@ -13,9 +13,8 @@ class Request
   private
 
   def parse_request(request_string)
-    header_section, body = request_string.split("\n\n", 2)
+    header_section, body = request_string.split("\r\n\r\n", 2)
     parse_start_line_and_headers(header_section)
-    parse_query_params
     parse_body_params(body)
   end
 
@@ -24,11 +23,16 @@ class Request
     @http_method, resource_with_params, @version = start_line.split(' ')
     @resource, query = resource_with_params.split('?', 2)
     @headers = header_lines.map { |line| line.split(': ', 2) }.to_h
-    @params.merge!(query.split('&').map { |pair| pair.split('=', 2) }.to_h) if query
+    parse_query_params(query)
   end
 
-  def parse_query_params
-    @parse_query_params ||= {}
+  def parse_query_params(query)
+    return unless query
+
+    query.split('&').each do |pair|
+      key, value = pair.split('=', 2)
+      @params[key] = value
+    end
   end
 
   def parse_body_params(body)
