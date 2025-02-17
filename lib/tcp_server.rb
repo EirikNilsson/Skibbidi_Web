@@ -1,5 +1,7 @@
 require 'socket'
 require 'erb'
+require 'uri'
+
 require_relative 'request'
 require_relative 'router'
 require_relative 'response'
@@ -31,12 +33,37 @@ class HTTPServer
       @id = params['id'].to_i
       @fruit = $fruits[@id] || 'Unknown'
     end
-    @router.add_route('GET', '/add/:num1/:num2/') do |params|
+    @router.add_route('GET', '/add/:num1/:num2') do |params|
       num1 = params['num1'].to_i
       num2 = params['num2'].to_i
       result = num1 + num2
       "<h1>Resultat: #{num1} + #{num2} = #{result}</h1>"
     end
+    @router.add_route('GET', '/sub/:num1/:num2') do |params|
+      num1 = params['num1'].to_i
+      num2 = params['num2'].to_i
+      result = num1 - num2
+      "<h1>Resultat: #{num1} - #{num2} = #{result}</h1>"
+    end
+    @router.add_route('GET', '/mul/:num1/:num2') do |params|
+      num1 = params['num1'].to_i
+      num2 = params['num2'].to_i
+      result = num1 * num2
+      "<h1>Resultat: #{num1} * #{num2} = #{result}</h1>"
+    end
+    @router.add_route('GET', '/div/:num1/:num2') do |params|
+      num1 = params['num1'].to_i
+      num2 = params['num2'].to_i
+      result = num1 / num2
+      "<h1>Resultat: #{num1} / #{num2} = #{result}</h1>"
+    end
+    
+
+    @router.add_route('GET', '/img/:url') do |params|
+      url = URI.decode_www_form_component(params['url'])
+      "<img src='#{url}'>"
+    end
+    #localhost:4567/img/https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2F6%2F6a%2FJavaScript-logo.png
 
     @router.add_route('POST', '/') do |params|
       @new_fruit = params['name']&.strip 
