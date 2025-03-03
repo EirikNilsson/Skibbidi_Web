@@ -11,6 +11,7 @@ class Request
   end
 
   private
+  
 
   def parse_request(request_string)
     header_section, body = request_string.split("\r\n\r\n", 2)

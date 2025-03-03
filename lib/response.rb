@@ -18,4 +18,6 @@ class Response
     session.print "\r\n"
     session.print body
   end
+
+  
 end

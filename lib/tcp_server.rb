@@ -60,8 +60,8 @@ class HTTPServer
     
 
     @router.add_route('GET', '/img/:url') do |params|
-      url = URI.decode_www_form_component(params['url'])
-      "<img src='#{url}'>"
+      url = URI.decode_www_form_component(params['url']) 
+      "<img src='#{url}'>" 
     end
     #localhost:4567/img/https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2F6%2F6a%2FJavaScript-logo.png
 
