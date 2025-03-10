@@ -9,8 +9,25 @@ require_relative 'response'
 # Global variabel för att lagra frukterna
 $fruits = ['Mango', 'Banan', 'Passionsfrukt', 'Kiwi', 'Apelsin']
 
-class HTTPServer
+# Enkel MIME-typ-mappning
+MIME_TYPES = {
+  '.html' => 'text/html',
+  '.css'  => 'text/css',
+  '.js'   => 'application/javascript',
+  '.png'  => 'image/png',
+  '.jpg'  => 'image/jpeg',
+  '.jpeg' => 'image/jpeg',
+  '.gif'  => 'image/gif',
+  '.txt'  => 'text/plain'
+}
 
+# Metod för att hämta MIME-typ baserat på filändelse
+def get_mime_type(file_path)
+  ext = File.extname(file_path).downcase
+  MIME_TYPES[ext] || 'application/octet-stream'
+end
+
+class HTTPServer
   def erb(template_path)
     file_path = "#{template_path}.erb"       
     template = File.read(file_path)          
@@ -32,38 +49,60 @@ class HTTPServer
     @router.add_route('GET', '/:id') do |params|
       @id = params['id'].to_i
       @fruit = $fruits[@id] || 'Unknown'
+
     end
+
     @router.add_route('GET', '/add/:num1/:num2') do |params|
       num1 = params['num1'].to_i
       num2 = params['num2'].to_i
       result = num1 + num2
       "<h1>Resultat: #{num1} + #{num2} = #{result}</h1>"
     end
+
     @router.add_route('GET', '/sub/:num1/:num2') do |params|
       num1 = params['num1'].to_i
       num2 = params['num2'].to_i
       result = num1 - num2
       "<h1>Resultat: #{num1} - #{num2} = #{result}</h1>"
     end
+
     @router.add_route('GET', '/mul/:num1/:num2') do |params|
       num1 = params['num1'].to_i
       num2 = params['num2'].to_i
       result = num1 * num2
       "<h1>Resultat: #{num1} * #{num2} = #{result}</h1>"
     end
+
     @router.add_route('GET', '/div/:num1/:num2') do |params|
       num1 = params['num1'].to_i
       num2 = params['num2'].to_i
       result = num1 / num2
       "<h1>Resultat: #{num1} / #{num2} = #{result}</h1>"
     end
-    
 
     @router.add_route('GET', '/img/:url') do |params|
       url = URI.decode_www_form_component(params['url']) 
       "<img src='#{url}'>" 
     end
-    #localhost:4567/img/https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2F6%2F6a%2FJavaScript-logo.png
+
+    @router.add_route('GET', '/fileimg/:url') do |params|
+      url = params['url']
+      "<img src='#{url}'>" 
+      puts url
+    end
+
+    @router.add_route('GET', '/files/*') do |params|
+      file_path = File.join('public', params['splat'].first)
+
+      if File.exist?(file_path)
+        content_type = get_mime_type(file_path)
+        [200, { 'Content-Type' => content_type }, File.read(file_path)]
+        puts "Filen hittades inte: #{file_path}"  # Lägg till denna rad också
+      else
+        puts "Filen hittades inte: #{file_path}"  # Lägg till denna rad också
+        [404, { 'Content-Type' => 'text/html' }, '<html><body><h1>404 Not Found</h1></body></html>']
+      end
+    end
 
     @router.add_route('POST', '/') do |params|
       @new_fruit = params['name']&.strip 
@@ -72,10 +111,9 @@ class HTTPServer
         erb("views/invalid")  
       else
         erb("views/index")  
-
       end
+    end
   end
-end
 
   def start
     server = TCPServer.new(@port)
@@ -96,8 +134,13 @@ end
       route_block = @router.match_route(request)
 
       if route_block
-        html = route_block.call(request.params)
-        Response.build(session, status_code: 200, body: html)
+        response = route_block.call(request.params)
+        if response.is_a?(Array) # Handles file responses
+          status_code, headers, body = response
+          Response.build(session, status_code: status_code, headers: headers, body: body)
+        else
+          Response.build(session, status_code: 200, body: response)
+        end
       else
         html = "<html><body><h1>404 Not Found</h1></body></html>"
         Response.build(session, status_code: 404, body: html)
