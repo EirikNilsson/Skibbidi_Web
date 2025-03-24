@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'uri'  # Nödvändig för att dekoda URL-parametrar
+
 # Parses HTTP request strings into their component parts.
 class Request
   attr_reader :http_method, :resource, :version, :headers, :params
@@ -11,12 +13,11 @@ class Request
   end
 
   private
-  
 
   def parse_request(request_string)
     header_section, body = request_string.split("\r\n\r\n", 2)
     parse_start_line_and_headers(header_section)
-    parse_body_params(body)
+    parse_body_params(body) if @http_method == "POST"  # Endast tolka body vid POST
   end
 
   def parse_start_line_and_headers(header_section)
@@ -32,16 +33,21 @@ class Request
 
     query.split('&').each do |pair|
       key, value = pair.split('=', 2)
-      @params[key] = value
+      @params[key] = URI.decode_www_form_component(value.to_s) if key
     end
   end
 
   def parse_body_params(body)
     return unless body
 
-    body.split('&').each do |pair|
-      key, value = pair.split('=', 2)
-      @params[key] = value
+    puts "RAW BODY: #{body.inspect}"
+    if @http_method == 'POST' && body
+
+      body.split('&').each do |pair|
+        key, value = pair.split('=', 2)
+        puts "Parsed Param - Key: #{key}, Value: #{value}" 
+        @params[key] = URI.decode_www_form_component(value.to_s) if key
+      end
     end
   end
 end

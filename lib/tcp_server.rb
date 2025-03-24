@@ -2,6 +2,7 @@ require 'socket'
 require 'erb'
 require 'uri'
 
+require_relative 'C:\Users\eirik.haugennilsson\Desktop\Programering 2\Skibbidi\app.rb'
 require_relative 'request'
 require_relative 'router'
 require_relative 'response'
@@ -26,7 +27,7 @@ def get_mime_type(file_path)
 end
 
 class HTTPServer
-  BASE_DIR = File.expand_path("../lib/public/img", __dir__)
+  BASE_DIR = File.expand_path("../public/img", __dir__)
   def erb(template_path)
     file_path = "#{template_path}.erb"       
     template = File.read(file_path)          
