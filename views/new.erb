@@ -6,7 +6,10 @@
     <title>Fruit Added</title>
 </head>
 <body>
-    <h1>New Fruit Added: #{@new_fruit}</h1>
-    <a href="/">Go Back to Fruit Page</a>
+    <form action="/" method="POST">
+        <label for="fruit">Frukt:</label>
+        <input type="text" id="fruit" name="name" required>
+        <button type="submit">Lägg till frukt</button>
+    </form>
 </body>
 </html>

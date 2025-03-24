@@ -6,10 +6,9 @@ require_relative 'request'
 require_relative 'router'
 require_relative 'response'
 
-# Global variabel för att lagra frukterna
 $fruits = ['Mango', 'Banan', 'Passionsfrukt', 'Kiwi', 'Apelsin']
 
-# Enkel MIME-typ-mappning
+
 MIME_TYPES = {
   '.html' => 'text/html',
   '.css'  => 'text/css',
@@ -21,13 +20,13 @@ MIME_TYPES = {
   '.txt'  => 'text/plain'
 }
 
-# Metod för att hämta MIME-typ baserat på filändelse
 def get_mime_type(file_path)
   ext = File.extname(file_path).downcase
   MIME_TYPES[ext] || 'application/octet-stream'
 end
 
 class HTTPServer
+  BASE_DIR = File.expand_path("../lib/public/img", __dir__)
   def erb(template_path)
     file_path = "#{template_path}.erb"       
     template = File.read(file_path)          
@@ -91,28 +90,37 @@ class HTTPServer
       puts url
     end
 
-    @router.add_route('GET', '/files/*') do |params|
-      file_path = File.join('public', params['splat'].first)
-
+    @router.add_route('GET', '/files/:splat') do |params|
+      file_path = File.join(BASE_DIR, params['splat'])
+    
       if File.exist?(file_path)
         content_type = get_mime_type(file_path)
-        [200, { 'Content-Type' => content_type }, File.read(file_path)]
-        puts "Filen hittades inte: #{file_path}"  # Lägg till denna rad också
+        file_data = File.binread(file_path)   
+        [200, { "Content-Type" => content_type }, file_data]
       else
-        puts "Filen hittades inte: #{file_path}"  # Lägg till denna rad också
-        [404, { 'Content-Type' => 'text/html' }, '<html><body><h1>404 Not Found</h1></body></html>']
+        [404, {}, "<h1>404 - Filen finns inte</h1>"]
       end
+    end
+    
+    
+
+    
+
+    @router.add_route('GET', '/fruits/new') do 
+      erb("views/new")  
     end
 
     @router.add_route('POST', '/') do |params|
-      @new_fruit = params['name']&.strip 
-
+      puts params.inspect
+      @new_fruit = params['name']&.strip
       if @new_fruit.nil? || @new_fruit.empty?
-        erb("views/invalid")  
+        erb("views/invalid") 
       else
+        $fruits.unshift(@new_fruit) 
         erb("views/index")  
       end
     end
+
   end
 
   def start
@@ -135,7 +143,7 @@ class HTTPServer
 
       if route_block
         response = route_block.call(request.params)
-        if response.is_a?(Array) # Handles file responses
+        if response.is_a?(Array) 
           status_code, headers, body = response
           Response.build(session, status_code: status_code, headers: headers, body: body)
         else

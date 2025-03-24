@@ -1,23 +1,20 @@
 # frozen_string_literal: true
 
+
 class Response
-  def self.build(session, status_code:, body:, content_type: 'text/html')
-    status_message = case status_code
-                     when 200 then 'OK'
-                     when 404 then 'Not Found'
-                     else 'Unknown'
-                     end
+  def self.build(session, status_code: 200, headers: {}, body: "", content_type: "")
+    session.print "HTTP/1.1 #{status_code} OK\r\n"
 
-    headers = {
-      'Content-Type' => content_type,
-      'Content-Length' => body.bytesize
-    }
+    headers.each do |key, value|
+      session.print "#{key}: #{value}\r\n"
+    end
 
-    session.print "HTTP/1.1 #{status_code} #{status_message}\r\n"
-    headers.each { |key, value| session.print "#{key}: #{value}\r\n" }
+    session.print "Content-Length: #{body.bytesize}\r\n"
     session.print "\r\n"
     session.print body
   end
+end
+  
 
   
-end
+
