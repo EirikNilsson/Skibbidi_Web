@@ -2,6 +2,7 @@ require 'socket'
 require 'erb'
 require 'uri'
 
+require_relative 'router_setup'
 require_relative 'C:\Users\eirik.haugennilsson\Desktop\Programering 2\Skibbidi\app.rb'
 require_relative 'request'
 require_relative 'router'

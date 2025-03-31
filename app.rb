@@ -1,9 +1,25 @@
 require_relative 'lib/router_setup'
 require 'erb'
 
+module AppRoutes
+  @routes = []
+
+  def self.routes
+    @routes
+  end
+
+  def self.get(path, &block)
+    @routes << { method: 'GET', path: path, block: block }
+  end
+
+  def self.post(path, &block)
+    @routes << { method: 'POST', path: path, block: block }
+  end
+end
+
 extend AppRoutes  
 
-$fruits = ['Mango', 'Banan', 'Passionsfrukt', 'Kiwi', 'Apelsin']
+@fruits = ['Mango', 'Banan', 'Passionsfrukt', 'Kiwi', 'Apelsin']
 
 def erb(template_path)
   file_path = "#{template_path}.erb"
@@ -11,6 +27,7 @@ def erb(template_path)
   ERB.new(template).result(binding)
 end
 
+# Definiera alla routrar här:
 get "/" do
   erb("views/index")
 end
@@ -76,11 +93,11 @@ get "/fruits/new" do
 end
 
 post "/" do |params|
-  new_fruit = params['name']&.strip
-  if new_fruit.nil? || new_fruit.empty?
+  new_fruit = params['name']
+  if new_fruit.nil? && new_fruit.empty?
     erb("views/invalid")
   else
-    $fruits.unshift(new_fruit)
+    @fruits.unshift(new_fruit)
     erb("views/index")
   end
 end
