@@ -38,16 +38,15 @@ class Request
   end
 
   def parse_body_params(body)
-    return unless body
-
+    return unless body && !body.strip.empty?
+  
     puts "RAW BODY: #{body.inspect}"
-    if @http_method == 'POST' && body
-
-      body.split('&').each do |pair|
-        key, value = pair.split('=', 2)
-        puts "Parsed Param - Key: #{key}, Value: #{value}" 
-        @params[key] = URI.decode_www_form_component(value.to_s) if key
-      end
+    
+    body.split('&').each do |pair|
+      key, value = pair.split('=', 2)
+      puts "Parsed Param - Key: #{key}, Value: #{value}"
+      @params[key] = URI.decode_www_form_component(value.to_s) if key
     end
   end
+  
 end

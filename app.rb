@@ -1,103 +1,99 @@
 require_relative 'lib/router_setup'
 require 'erb'
+require 'uri'
 
-module AppRoutes
-  @routes = []
+$fruits = ['Mango', 'Banan', 'Passionsfrukt', 'Kiwi', 'Apelsin']
 
-  def self.routes
-    @routes
+class App
+  include AppRoutes
+
+  def initialize
+    @fruits = $fruits
   end
 
-  def self.get(path, &block)
-    @routes << { method: 'GET', path: path, block: block }
+  def erb(template_path)
+    file_path = "#{template_path}.erb"
+    template = File.read(file_path)
+    ERB.new(template).result(binding)
   end
 
-  def self.post(path, &block)
-    @routes << { method: 'POST', path: path, block: block }
-  end
-end
+  def setup_routes(router)
+    self.router = router
 
-extend AppRoutes  
+    get "/" do |params|
+      erb("views/index")
+    end
 
-@fruits = ['Mango', 'Banan', 'Passionsfrukt', 'Kiwi', 'Apelsin']
+    get "/login" do |params|
+      erb("views/login")
+    end
 
-def erb(template_path)
-  file_path = "#{template_path}.erb"
-  template = File.read(file_path)
-  ERB.new(template).result(binding)
-end
+    get "/:id" do |params|
+      @fruit = $fruits[params["id"].to_i] || "Unknown"
+      "Frukt: #{@fruit}"
+    end
 
-# Definiera alla routrar här:
-get "/" do
-  erb("views/index")
-end
+    get "/add/:num1/:num2" do |params|
+      num1 = params["num1"].to_i
+      num2 = params["num2"].to_i
+      "<h1>Resultat: #{num1} + #{num2} = #{num1 + num2}</h1>"
+    end
 
-get "/login" do
-  erb("views/login")
-end
+    get "/sub/:num1/:num2" do |params|
+      num1 = params["num1"].to_i
+      num2 = params["num2"].to_i
+      "<h1>Resultat: #{num1} - #{num2} = #{num1 - num2}</h1>"
+    end
 
-get "/:id" do |params|
-  id = params['id'].to_i
-  @fruit = $fruits[id] || 'Unknown'
-  "Frukt: #{@fruit}"
-end
+    get "/mul/:num1/:num2" do |params|
+      num1 = params["num1"].to_i
+      num2 = params["num2"].to_i
+      "<h1>Resultat: #{num1} * #{num2} = #{num1 * num2}</h1>"
+    end
 
-get "/add/:num1/:num2" do |params|
-  num1 = params['num1'].to_i
-  num2 = params['num2'].to_i
-  "<h1>Resultat: #{num1} + #{num2} = #{num1 + num2}</h1>"
-end
+    get "/div/:num1/:num2" do |params|
+      num1 = params["num1"].to_i
+      num2 = params["num2"].to_i
+      "<h1>Resultat: #{num1} / #{num2} = #{num1 / num2}</h1>"
+    end
 
-get "/sub/:num1/:num2" do |params|
-  num1 = params['num1'].to_i
-  num2 = params['num2'].to_i
-  "<h1>Resultat: #{num1} - #{num2} = #{num1 - num2}</h1>"
-end
+    get "/img/:url" do |params|
+      url = URI.decode_www_form_component(params["url"])
+      "<img src='#{url}'>"
+    end
 
-get "/mul/:num1/:num2" do |params|
-  num1 = params['num1'].to_i
-  num2 = params['num2'].to_i
-  "<h1>Resultat: #{num1} * #{num2} = #{num1 * num2}</h1>"
-end
+    get "/fileimg/:url" do |params|
+      url = params["url"]
+      "<img src='#{url}'>"
+    end
 
-get "/div/:num1/:num2" do |params|
-  num1 = params['num1'].to_i
-  num2 = params['num2'].to_i
-  "<h1>Resultat: #{num1} / #{num2} = #{num1 / num2}</h1>"
-end
+    get "/files/:splat" do |params|
+      file_path = File.join("public/img", params["splat"])
+      if File.exist?(file_path)
+        content_type = MIME_TYPES[File.extname(file_path)] || "application/octet-stream"
+        file_data = File.binread(file_path)
+        [200, { "Content-Type" => content_type }, file_data]
+      else
+        [404, {}, "<h1>404 - Filen finns inte</h1>"]
+      end
+    end
 
-get "/img/:url" do |params|
-  url = URI.decode_www_form_component(params['url'])
-  "<img src='#{url}'>"
-end
+    get "/fruits/new" do |params|
+      erb("views/new")
+    end
 
-get "/fileimg/:url" do |params|
-  url = params['url']
-  "<img src='#{url}'>"
-end
+    get "/fruits/new/:splat" do |params|
+      new_fruit = params["splat"]
+      $fruits.unshift(new_fruit)
+      redirect("/")
+    end
 
-get "/files/:splat" do |params|
-  file_path = File.join("public/img", params['splat'])
 
-  if File.exist?(file_path)
-    content_type = MIME_TYPES[File.extname(file_path)] || 'application/octet-stream'
-    file_data = File.binread(file_path)
-    [200, { "Content-Type" => content_type }, file_data]
-  else
-    [404, {}, "<h1>404 - Filen finns inte</h1>"]
-  end
-end
-
-get "/fruits/new" do
-  erb("views/new")
-end
-
-post "/" do |params|
-  new_fruit = params['name']
-  if new_fruit.nil? && new_fruit.empty?
-    erb("views/invalid")
-  else
-    @fruits.unshift(new_fruit)
-    erb("views/index")
+    post "/new" do |params|
+      new_fruit = params[:name]
+      puts new_fruit
+      $fruits.unshift(new_fruit)
+      redirect("/")
+    end
   end
 end

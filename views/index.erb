@@ -78,15 +78,13 @@
         </section>
         <section>
             <ul>
-                <form action="/fruits/new" method="GET">
-                    <button type="submit">Add Fruit</button>
-                </form>
+                <a href="/fruits/new" class="button">Lägg till Ny frukt</a>
           
                 <h3>Frukter i listan:</h3>
                 <ul>
-                <% $fruits.each do |fruit| %>
-                    <li><%= fruit %></li>
-                <% end %>
+                    <% $fruits.each do |fruit| %>
+                        <li><%= fruit %></li>
+                    <% end %>
                 </ul>
             </ul>
         </section>
