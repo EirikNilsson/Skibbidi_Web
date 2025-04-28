@@ -88,9 +88,8 @@ class App
       redirect("/")
     end
 
-
-    post "/new" do |params|
-      new_fruit = params[:name]
+    post "/fruits" do |params|
+      new_fruit = params["name"]
       puts new_fruit
       $fruits.unshift(new_fruit)
       redirect("/")

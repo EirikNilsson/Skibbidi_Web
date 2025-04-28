@@ -41,12 +41,17 @@ class Request
     return unless body && !body.strip.empty?
   
     puts "RAW BODY: #{body.inspect}"
-    
+  
     body.split('&').each do |pair|
       key, value = pair.split('=', 2)
-      puts "Parsed Param - Key: #{key}, Value: #{value}"
-      @params[key] = URI.decode_www_form_component(value.to_s) if key
+      if key
+        clean_key = key.strip  
+        clean_value = URI.decode_www_form_component(value.to_s).strip
+        puts "Parsed Param - Key: #{clean_key.inspect}, Value: #{clean_value.inspect}"
+        @params[clean_key] = clean_value
+      end
     end
   end
+  
   
 end
