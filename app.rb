@@ -88,11 +88,23 @@ class App
       redirect("/")
     end
 
+    get "/fruits/:id/delete" do |params|
+      $fruits.delete(:id)
+      redirect("/")
+    end
+
     post "/fruits" do |params|
       new_fruit = params["name"]
       puts new_fruit
       $fruits.unshift(new_fruit)
       redirect("/")
     end
+
+    post "/fruits/delete" do |params|
+      fruit_to_delete = params["fruit"]
+      $fruits.delete(fruit_to_delete)
+      redirect("/")
+    end
+      
   end
 end

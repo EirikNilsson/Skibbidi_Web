@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require 'uri'  # Nödvändig för att dekoda URL-parametrar
+require 'uri'  
 
-# Parses HTTP request strings into their component parts.
 class Request
   attr_reader :http_method, :resource, :version, :headers, :params
 

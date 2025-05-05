@@ -66,7 +66,6 @@
 <body>
     <header>
         <h1>Välkommen till min server!</h1>
-        <p>En enkel HTTP-server skriven i Ruby</p>
     </header>
     <main>
         <section>
@@ -83,7 +82,12 @@
                 <h3>Frukter i listan:</h3>
                 <ul>
                     <% $fruits.each do |fruit| %>
-                        <li><%= fruit %></li>
+                        <li><%= fruit %>    
+                            <form action="/fruits/delete" method="POST">
+                            <input type="hidden" name="fruit" value="<%= fruit %>"/>
+                            <button type="submit">Ta bort</button>
+                            </form>
+                        </li>
                     <% end %>
                 </ul>
             </ul>
@@ -100,13 +104,9 @@
             <a href="/files/jake.gif" class="button">Gif 1</a>
         </section>
         <section>
-            <h2>Testa igen</h2>
-            <p>Klicka på knappen nedan för att ladda om sidan och se serverns svar igen.</p>
-            <a href="/" class="button">Ladda om</a>
+            <a href="/" class="button">Ladda om</a> 
+            <a href="/login" class="button">Logga ut</a>
         </section>
     </main>
-    <footer>
-        <p>Skapad av [Eirik Nilsson] - Ruby HTTP Server © 2025</p>
-    </footer>
 </body>
 </html>
