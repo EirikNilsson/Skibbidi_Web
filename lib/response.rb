@@ -11,7 +11,7 @@ class Response
   # @param status_code [Integer] HTTP-statuskod, t.ex. 200 eller 404.
   # @param headers [Hash{String => String}] HTTP-headrar som skickas med svaret.
   # @param body [String] Kroppen i svaret, dvs själva innehållet.
-  # @param content_type [String] (Ignorerad parameter – ev. för framtida användning).
+  # @param content_type [String] (Ignorerad parameter).
   # @return [void]
   def self.build(session, status_code: 200, headers: {}, body: "", content_type: "")
     session.print "HTTP/1.1 #{status_code} OK\r\n"

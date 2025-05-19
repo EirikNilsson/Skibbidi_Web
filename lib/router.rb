@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-#TODO Dokumentera (allt) https://rubydoc.info/gems/yard/file/docs/GettingStarted.md
-
-#TODO sekvensdiagram
 # frozen_string_literal: true
 
 # Router hanterar HTTP-routing genom att matcha HTTP-metod och sökväg

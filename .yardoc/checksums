@@ -1,6 +1,6 @@
 lib/router.rb 851cda05c85ab9cdd7a24595a68a515059629dc9
 lib/request.rb 25572e8128e60433b1e6b33e8bc83167b95e093c
-lib/response.rb 0eccb4f744f15a3c051b37a29aa0cb4e9f6c60e0
+lib/response.rb 8f1d143aa15023b3072bd1f8c30d701a8ffec466
 lib/mime_types.rb 1f6513a83e102ba1d03ecfacb2577a46f9fcabec
 lib/tcp_server.rb cdf11e0c11242d699116f2c0fe42ea321b21ca23
 lib/router_setup.rb dea4147e4269d759cf2b411451f88d55896ce5d8
